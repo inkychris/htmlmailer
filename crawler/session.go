@@ -11,7 +11,7 @@ type Client interface {
 }
 
 type LoginForm struct {
-	Url string
+	Action        string
 	UsernameField string
 	PasswordField string
 }
@@ -38,7 +38,7 @@ func (session *Session) PostForm(url string, data url.Values) (*http.Response, e
 
 func (session *Session) Login(credentials Credentials) (resp *http.Response, err error) {
 	return session.PostForm(
-		session.loginForm.Url,
+		session.loginForm.Action,
 		url.Values{
 			session.loginForm.UsernameField: {credentials.Username()},
 			session.loginForm.PasswordField: {credentials.Password()},
