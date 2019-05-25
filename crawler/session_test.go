@@ -114,7 +114,3 @@ func TestSession_AuthGet(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t,200, resp.StatusCode)
 }
-
-func TestNewSession(t *testing.T) {
-	assert.True(t, false)
-}
