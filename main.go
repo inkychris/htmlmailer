@@ -19,9 +19,6 @@ import (
 )
 
 func htmlmailer(cmd *cobra.Command, args []string) {
-	if len(args) != 1 {
-		log.Fatal("Usage: htmlmailer <config_file>")
-	}
 	yamlConfig, err := ioutil.ReadFile(args[0])
 	if err != nil {
 		log.Fatal(err)
@@ -58,6 +55,7 @@ func main() {
 		Use:   "htmlmailer <config_file>",
 		Short: "Send the HTML response of a URL via email",
 		Run: htmlmailer,
+		Args: cobra.ExactArgs(1),
 	}
 	err := RootCmd.Execute()
 	if err != nil {
