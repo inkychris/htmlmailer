@@ -39,8 +39,8 @@ func htmlmailer(cmd *cobra.Command, args []string) {
 		return
 	}
 
-	cronos := cron.New()
-	_, err = cronos.AddFunc(config.Schedule, func(){
+	scheduler := cron.New()
+	_, err = scheduler.AddFunc(config.Schedule, func(){
 		err := config.Run()
 		if err != nil {
 			log.Print(err)
@@ -49,6 +49,7 @@ func htmlmailer(cmd *cobra.Command, args []string) {
 	if err != nil {
 		log.Fatal(err)
 	}
+	scheduler.Start()
 	select{}
 }
 
