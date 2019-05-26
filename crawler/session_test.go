@@ -68,7 +68,7 @@ func (client *FakeClient) PostForm(url string, data url.Values) (resp *http.Resp
 	}, nil
 }
 
-func NewTestSession() (session *crawler.Session, client *FakeClient, credentials crawler.Credentials) {
+func NewTestSession() (session crawler.AuthClient, client *FakeClient, credentials crawler.Credentials) {
 	credentials = crawler.NewCredentials("testuser", "Password123")
 	loginForm := crawler.LoginForm{
 		Action:        "example.com/login",
@@ -82,7 +82,7 @@ func NewTestSession() (session *crawler.Session, client *FakeClient, credentials
 		LoginForm:    loginForm,
 		Credentials:  credentials,
 	}
-	session = crawler.NewSession(client, loginForm)
+	session = crawler.Session(client, loginForm)
 	return
 }
 
