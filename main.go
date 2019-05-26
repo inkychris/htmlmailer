@@ -151,6 +151,7 @@ func (config *Config) Run() error {
 	}
 
 	if config.Login.Form.Action != "" {
+		log.Printf ("Logging in to site: %s", config.Login.Form.Action)
 		resp, err := client.PostForm(
 			config.Login.Form.Action,
 			url.Values{
@@ -162,10 +163,12 @@ func (config *Config) Run() error {
 			return err
 		}
 		if resp.StatusCode >= 400 {
-			return errors.New(fmt.Sprintf("Unsuccessful status code: %s (%s)", resp.Status, config.Login.Form.Action))
+			return errors.New("Unsuccessful status code: " + resp.Status)
 		}
+		log.Print("Success")
 	}
 
+	log.Printf("Getting URL content: %s", config.TargetUrl)
 	resp, err := client.Get(config.TargetUrl)
 	if err != nil {
 		return err
@@ -182,12 +185,14 @@ func (config *Config) Run() error {
 	}
 
 	dialer := config.NewEmailDialer()
+	log.Printf("Opening connection to SMTP server: " + config.SMTP.Host)
 	sender, err := dialer.Dial()
 	if err != nil {
 		return err
 	}
 
 	for _, address := range config.Email.To {
+		log.Printf("Sending email to " + address)
 		message := mail.NewMessage()
 		message.SetHeader("From", config.Email.From)
 		message.SetHeader("To", address)
@@ -198,6 +203,7 @@ func (config *Config) Run() error {
 			log.Printf("Failed to send email to %s: %s", address, err.Error())
 		}
 	}
+	log.Printf("Done")
 	return sender.Close()
 }
 
