@@ -113,3 +113,42 @@ func TestValidateConfigSchema_MissingEmailRecipient(t *testing.T) {
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "email.to")
 }
+
+func TestConfigFromBytes_Complete(t *testing.T) {
+	config, err := ConfigFromBytes([]byte(CompleteConfig))
+	require.NoError(t, err)
+	assert.Equal(t, "bob@example.com", config.Login.Credentials.Username)
+	assert.Equal(t, "wxyz6789", config.Login.Credentials.Password)
+	assert.Equal(t, "https://some.site.com/login", config.Login.Form.Action)
+	assert.Equal(t, "user[email]", config.Login.Form.UsernameField)
+	assert.Equal(t, "user[password]", config.Login.Form.PasswordField)
+	assert.Equal(t, "https://some.site.com/user/bob/example", config.TargetUrl)
+	assert.Equal(t, "0 7 * * 2", config.Schedule)
+	assert.Equal(t, []string{"alice@example.com", "charlie@example.com"}, config.Email.To)
+	assert.Equal(t, "bob@example.com", config.Email.From)
+	assert.Equal(t, "Bob's Example", config.Email.Subject)
+	assert.Equal(t, "example.com", config.SMTP.Host)
+	assert.Equal(t, 465, config.SMTP.Port)
+	assert.Equal(t, "bob@example.com", config.SMTP.Username)
+	assert.Equal(t, "abcd1234", config.SMTP.Password)
+}
+
+func TestConfigFromBytes_Minimal(t *testing.T) {
+	config, err := ConfigFromBytes([]byte(MinimalConfig))
+	require.NoError(t, err)
+	assert.Equal(t, config.Login, Config{}.Login)
+	assert.Equal(t, "https://some.site.com/user/bob/example", config.TargetUrl)
+	assert.Empty(t, config.Schedule)
+	assert.Equal(t, []string{"alice@example.com"}, config.Email.To)
+	assert.Equal(t, "bob@example.com", config.Email.From)
+	assert.Empty(t, config.Email.Subject)
+	assert.Equal(t, "example.com", config.SMTP.Host)
+	assert.Equal(t, 465, config.SMTP.Port)
+	assert.Equal(t, "bob@example.com", config.SMTP.Username)
+	assert.Equal(t, "abcd1234", config.SMTP.Password)
+}
+
+func TestConfigFromBytes_MissingTarget(t *testing.T) {
+	_, err := ConfigFromBytes([]byte(ConfigMissingTarget))
+	require.Error(t, err)
+}

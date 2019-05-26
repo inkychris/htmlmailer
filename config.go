@@ -16,16 +16,18 @@ type Config struct {
 			Password string `yaml:"password"`
 		} `yaml:"credentials"`
 		Form struct {
-			Host string `yaml:"host"`
-			Port int `yaml:"port"`
-			Username string `yaml:"username"`
-			Password string `yaml:"password"`
-			From string `yaml:"from"`
+			Action string `yaml:"action"`
+			UsernameField string `yaml:"username_field"`
+			PasswordField string `yaml:"password_field"`
 		} `yaml:"form"`
 	} `yaml:"login"`
 	TargetUrl string `yaml:"target_url"`
 	Schedule string `yaml:"schedule"`
-	Email struct {} `yaml:"email"`
+	Email struct {
+		To []string `yaml:"to"`
+		From string `yaml:"from"`
+		Subject string `yaml:"subject"`
+	} `yaml:"email"`
 	SMTP struct {
 		Host string `yaml:"host"`
 		Port int `yaml:"port"`
@@ -62,5 +64,8 @@ func ConfigFromBytes(yamlConfig []byte) (config *Config, err error) {
 	}
 	config = &Config{}
 	err = yaml.Unmarshal(yamlConfig, config)
+	if config.Email.From == "" {
+		config.Email.From = config.SMTP.Username
+	}
 	return
 }
