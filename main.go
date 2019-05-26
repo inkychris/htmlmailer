@@ -198,7 +198,7 @@ func (config *Config) Run() error {
 			log.Printf("Failed to send email to %s: %s", address, err.Error())
 		}
 	}
-	return nil
+	return sender.Close()
 }
 
 const configSchema = `{
